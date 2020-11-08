@@ -3,7 +3,10 @@
 
 dijkstra::dijkstra()
 {
-     
+     //set all the distances to maximum float value;theoritically infinity
+    for(int i=0;i<num;i++)
+        for(int j=0;j<num;j++)
+            dist[i][j]=FLT_MAX;
 }
 
 void dijkstra::findmin(float dist[num][num],int& minX,int& minY){
@@ -31,11 +34,6 @@ void dijkstra:: findpath(pair<int,int> previous[num][num],float dist[num][num],i
 }
 
 void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
-
-//set all the distances to maximum float value;theoritically infinity
-    for(int i=0;i<num;i++)
-        for(int j=0;j<num;j++)
-            dist[i][j]=FLT_MAX;
 
 //set the distance of origin to zero
     dist[posX][posY]=0.0;
