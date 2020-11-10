@@ -14,6 +14,7 @@
 #include<sstream>
 
 #include "dijkstra.hpp"
+#include "player.hpp"
 
 using namespace std;
 using namespace sf;
@@ -28,11 +29,14 @@ class game {
     int moves=60;
 
     Texture background,texPlayer,texPrincess,path,black;
-    Sprite bg,player,princess,paths,obstacle;
+    Sprite bg,princess,paths,obstacle;
 
     Font font;
+    Clock clock;
+    float dtime=0.0f;
 
     dijkstra dj;
+    Player player;
     
 
 

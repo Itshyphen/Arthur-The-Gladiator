@@ -46,7 +46,7 @@ void game::start()
         cout << "Unable to load image!";
     }
     //txture for knight
-    if (!texPlayer.loadFromFile("media/knight.png", sf::IntRect(0, 0, 50, 50)))
+    if (!texPlayer.loadFromFile("media/knight.png"))
     {
         cout << "Unable to load image!";
     }
@@ -59,8 +59,8 @@ void game::start()
     bg.setTexture(background);
     bg.setScale(1000 / bg.getGlobalBounds().width, 900 / bg.getGlobalBounds().height);
 
-    player.setTexture(texPlayer);
-    player.setTextureRect(sf::IntRect(5, 5, 40, 40));
+    player.pSprite(texPlayer);
+    // player.setTextureRect(sf::IntRect(5, 5, 40, 40));
 
     princess.setTexture(texPrincess);
     princess.setTextureRect(sf::IntRect(30, 30, 80, 130));
@@ -94,6 +94,7 @@ void game::start()
 
     while (window.isOpen())
     {
+        dtime = clock.restart().asSeconds();
         Event event;
         while (window.pollEvent(event))
         {
@@ -113,7 +114,7 @@ void game::start()
                     {
                         if (grid[posX][posY - 1] == 1)
                         {
-                            texPlayer.loadFromFile("media/knight.png", sf::IntRect(0, 50, 50, 50));
+                            player.moveLeft();
                             posY = posY - 1;
                             moves--;
                         }
@@ -122,7 +123,7 @@ void game::start()
                     {
                         if (grid[posX][posY + 1] == 1)
                         {
-                            texPlayer.loadFromFile("media/knight.png", sf::IntRect(0, 100, 50, 50));
+                            player.moveRight();
                             posY = posY + 1;
                             moves--;
                         }
@@ -131,7 +132,7 @@ void game::start()
                     {
                         if (grid[posX - 1][posY] == 1)
                         {
-                            texPlayer.loadFromFile("media/knight.png", sf::IntRect(0, 150, 50, 50));
+                            player.moveUp();
                             posX = posX - 1;
                             moves--;
                         }
@@ -140,13 +141,33 @@ void game::start()
                     {
                         if (grid[posX + 1][posY] == 1)
                         {
-                            texPlayer.loadFromFile("media/knight.png", sf::IntRect(0, 0, 50, 50));
+                            player.moveDown();
                             posX = posX + 1;
                             moves--;
                         }
                     }
+                    player.setSpeed(3, sf::milliseconds(80));
                 }
             }
+
+// if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) //Move Up
+//             player.moveUp();
+
+//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //Move Down
+//             player.moveDown();
+
+//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) //Move Right
+//             player.moveRight();
+
+//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) //Move Left
+//             player.moveLeft();
+
+//         //SPRINT
+//         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+//             player.setSpeed(0.35, sf::milliseconds(50));
+//         else
+            // player.setSpeed(0.20, sf::milliseconds(80));
+
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
@@ -236,12 +257,15 @@ void game::start()
                     window.draw(paths);
                 }
             }
-        player.setPosition(posY * 30 - 7, posX * 30 - 10);
-        window.draw(player); //source
+            // player.getSprite().setPosition(posY*30, posX*30);
+        window.draw(player.getSprite()); //source
 
         princess.setPosition(destY * 30, destX * 30 - 10);
 
         window.draw(princess); //destination
+        cout<<player.getSprite().getPosition().x;
+        cout<<"       "<<player.getSprite().getPosition().x<<endl;
+
 
         window.display();
     }

@@ -3,7 +3,13 @@
         "*.tpp": "cpp",
         "fstream": "cpp",
         "*.tcc": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "algorithm": "cpp",
+        "random": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "utility": "cpp",
+        "iostream": "cpp"
     },
     "terminal.integrated.shell.windows": "cmd.exe"
 }
