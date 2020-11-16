@@ -81,16 +81,31 @@ void game::start()
     CircleShape hint(35); //button dijkstra
     hint.setFillColor(Color::Green);
 
+    CircleShape imm(15); //immunity
+    imm.setFillColor(Color::Green);
+
+//Creating the obstacles
        for (int i = 0; i < 400; i++)
     {
         int a=rand()%30,b=rand()%30;
         if (!((a==posY&&b==posX)||(a==destY&&b==destX)))
         {
              grid[a][b]=0;
-        }
-        
-       
+        } 
     }
+
+    //Creating the immunity
+        for (int i = 0; i < 10; i++)
+    {
+        int a=rand()%30,b=rand()%30;
+        if (!((a==posY&&b==posX)||(a==destY&&b==destX)))
+        {
+            if(grid[a][b]==1)
+            grid[a][b]=2;
+            
+        } 
+    }
+
 
     while (window.isOpen())
     {
@@ -104,7 +119,7 @@ void game::start()
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
                 window.close();
 
-            if (grid[posX][posY] == 1)
+            if (!grid[posX][posY] == 0)
             {
 
                 //movement of player
@@ -112,7 +127,7 @@ void game::start()
                 {
                     if (event.key.code == sf::Keyboard::Left)
                     {
-                        if (grid[posX][posY - 1] == 1)
+                        if (!grid[posX][posY - 1] == 0)
                         {
                             player.moveLeft();
                             posY = posY - 1;
@@ -121,7 +136,7 @@ void game::start()
                     }
                     else if (event.key.code == sf::Keyboard::Right)
                     {
-                        if (grid[posX][posY + 1] == 1)
+                        if (!grid[posX][posY + 1] == 0)
                         {
                             player.moveRight();
                             posY = posY + 1;
@@ -130,7 +145,7 @@ void game::start()
                     }
                     else if (event.key.code == sf::Keyboard::Up)
                     {
-                        if (grid[posX - 1][posY] == 1)
+                        if (!grid[posX - 1][posY] == 0)
                         {
                             player.moveUp();
                             posX = posX - 1;
@@ -139,7 +154,7 @@ void game::start()
                     }
                     else if (event.key.code == sf::Keyboard::Down)
                     {
-                        if (grid[posX + 1][posY] == 1)
+                        if (!grid[posX + 1][posY] == 0)
                         {
                             player.moveDown();
                             posX = posX + 1;
@@ -150,23 +165,6 @@ void game::start()
                 }
             }
 
-// if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) //Move Up
-//             player.moveUp();
-
-//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //Move Down
-//             player.moveDown();
-
-//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) //Move Right
-//             player.moveRight();
-
-//         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) //Move Left
-//             player.moveLeft();
-
-//         //SPRINT
-//         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-//             player.setSpeed(0.35, sf::milliseconds(50));
-//         else
-            // player.setSpeed(0.20, sf::milliseconds(80));
 
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -241,6 +239,23 @@ void game::start()
                     window.draw(obstacle);
                 }
 
+                 if (grid[i / 30][j / 30] == 2)
+                {
+                    
+                    //draw the immunity
+                    imm.setPosition(j, i);
+                    window.draw(imm);
+                }
+
+  if (grid[i / 30][j / 30] == 2&&posY==i&&posX==j)
+                {
+                    cout<<"asgfahdghsjd";
+                    
+                        grid[i / 30][j / 30] = 1;
+                        moves+=10;
+                    
+                }                
+
                 else if (dj.visited[i / 30][j / 30] == true && filled[i / 30][j / 30] == 0)
                 {
                     //visited cells in using dijkstra algorithm
@@ -265,6 +280,8 @@ void game::start()
         window.draw(princess); //destination
         cout<<player.getSprite().getPosition().x;
         cout<<"       "<<player.getSprite().getPosition().x<<endl;
+
+
 
 
         window.display();
