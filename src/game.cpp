@@ -247,7 +247,7 @@ void game::start()
                     window.draw(imm);
                 }
 
-  if (grid[i / 30][j / 30] == 2&&posY==i&&posX==j)
+  if (grid[i / 30][j / 30] == 2&&posY==j/30&&posX==i/30)
                 {
                     cout<<"asgfahdghsjd";
                     
