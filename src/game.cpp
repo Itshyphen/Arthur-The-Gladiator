@@ -2,7 +2,7 @@
 
 game::game()
 {
-      for (int i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
         for (int j = 0; j < num; j++)
         {
             if (i == 0 || i == num - 1 || j == 0 || j == num - 1) //border
@@ -15,16 +15,14 @@ game::game()
         for (int j = 0; j < num; j++)
         {
             dj.visited[i][j] = false; //all cells are unvisited
-            filled[i][j] = 0;         //all cells are empty
+            dj.filled[i][j] = 0;      //all cells are empty
         }
-  
 }
 
 void game::start()
 {
-    
 
-    RenderWindow window(VideoMode(1000,900),"Grid");
+    RenderWindow window(VideoMode(1000, 900), "Grid");
 
     //Loading the font
     font.loadFromFile("arial.ttf");
@@ -56,6 +54,18 @@ void game::start()
         cout << "Unable to load image!";
     }
 
+    //ememy texture
+    if (!emy.loadFromFile("media/enemy.png", sf::IntRect(0, 0, 256, 2056)))
+    {
+        cout << "Unable to load image!";
+    }
+
+    //ememy texture
+    if (!imm.loadFromFile("media/immunity.png"))
+    {
+        cout << "Unable to load image!";
+    }
+
     bg.setTexture(background);
     bg.setScale(1000 / bg.getGlobalBounds().width, 900 / bg.getGlobalBounds().height);
 
@@ -66,11 +76,18 @@ void game::start()
     princess.setTextureRect(sf::IntRect(30, 30, 80, 130));
     princess.setScale(0.35f, 0.35f);
 
+    enemy.setTexture(emy);
+    enemy.setTextureRect(sf::IntRect(0, 500, 256, 346));
+    enemy.setScale(0.15f, 0.2f);
+
+    immunity.setTexture(imm);
+    immunity.setScale(0.075f, 0.075f);
+
     paths.setTexture(path);
 
     obstacle.setTexture(black);
 
-    //cell visited using djkstr algorithm
+    //cell visited using dijkstra algorithm
     CircleShape visitedcell(10);
     visitedcell.setFillColor(Color(200, 200, 140));
 
@@ -81,31 +98,60 @@ void game::start()
     CircleShape hint(35); //button dijkstra
     hint.setFillColor(Color::Green);
 
-    CircleShape imm(15); //immunity
-    imm.setFillColor(Color::Green);
-
-//Creating the obstacles
-       for (int i = 0; i < 400; i++)
+    //Creating the obstacles
+    for (int i = 0; i < 400; i++)
     {
-        int a=rand()%30,b=rand()%30;
-        if (!((a==posY&&b==posX)||(a==destY&&b==destX)))
+        int a = rand() % 30, b = rand() % 30;
+        if (!((a == posY && b == posX) || (a == destY && b == destX)))
         {
-             grid[a][b]=0;
-        } 
+            grid[a][b] = 0;
+        }
     }
 
     //Creating the immunity
-        for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 20; i++)
     {
-        int a=rand()%30,b=rand()%30;
-        if (!((a==posY&&b==posX)||(a==destY&&b==destX)))
+        int a = rand() % 30, b = rand() % 30;
+        if (!((a == posY && b == posX) || (a == destY && b == destX)) && !(grid[a][b] == 2 || grid[a][b] == 3 || grid[a][b] == 0))
         {
-            if(grid[a][b]==1)
-            grid[a][b]=2;
-            
-        } 
+            grid[a][b] = 4;
+        }
     }
 
+    //Creating the enemy
+    for (int i = 0; i < 20; i++)
+    {
+        int a = (rand() + 50) % 30, b = (rand() + 50) % 30;
+        if (!((a == posY && b == posX) || (a == destY && b == destX)))
+        {
+            if (grid[a][b] == 1 && (a > 4 || b > 4))
+            {
+                grid[a][b] = 2;
+            }
+            if (grid[a][b] == 2)
+            {
+                if (grid[a + 1][b + 1] == 1)
+                {
+                    grid[a + 1][b + 1] = 3;
+                }
+
+                if (grid[a + 1][b - 1] == 1)
+                {
+                    grid[a + 1][b - 1] = 3;
+                }
+
+                if (grid[a - 1][b + 1] == 1)
+                {
+                    grid[a - 1][b + 1] = 3;
+                }
+
+                if (grid[a - 1][b - 1] == 1)
+                {
+                    grid[a - 1][b - 1] = 3;
+                }
+            }
+        }
+    }
 
     while (window.isOpen())
     {
@@ -119,7 +165,17 @@ void game::start()
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
                 window.close();
 
-            if (!grid[posX][posY] == 0)
+            //if you are stuck in jungle without path to move on, press enter and destroy adjascent four walls decreasing moves by 8
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
+            {
+                grid[posX - 1][posY] = 1;
+                grid[posX + 1][posY] = 1;
+                grid[posX][posY + 1] = 1;
+                grid[posX][posY + 1] = 1;
+                moves -= 8;
+            }
+
+            if (!grid[posX][posY] == 0 && hints != 0)
             {
 
                 //movement of player
@@ -161,11 +217,9 @@ void game::start()
                             moves--;
                         }
                     }
-                    player.setSpeed(3, sf::milliseconds(80));
+                    player.setSpeed(10, sf::milliseconds(80));
                 }
             }
-
-
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
@@ -177,8 +231,29 @@ void game::start()
                 cout << "Cell " << row << " , " << col << " state is: " << grid[row][col] << endl;
                 if (X > 900 && X < 975 && Y > 30 && Y < 100)
                 {
-                    //calling dijkstra function
-                    dj.run(posX, posY, destX, destY, grid);
+                    if (hints == 1)
+                    {
+                        if (moves < 10)
+                        {
+                            cout << "You cant use hint! ";
+                        }
+                        dj.run(posX, posY, destX, destY, grid);
+                        moves -= 10;
+                        hints--;
+                    }
+                    else
+                    {
+                        dj.destroy();
+                        if (dj.failed = true)
+                        {
+                            hints++;
+                        }
+                        else
+                        {
+                            hints += 10;
+                            cout << "you can use hints only one time";
+                        }
+                    }
                 }
             }
         }
@@ -189,6 +264,11 @@ void game::start()
             gameOver();
         }
 
+        if (life <= 0)
+        {
+            window.close();
+            cout << "You are killed by enemy, try again!!!";
+        }
         if (posX == destX && posY == destY)
         {
             window.close();
@@ -199,7 +279,7 @@ void game::start()
         window.draw(bg);
         hint.setPosition(930, 30);
 
-        //launch dijkstrab algorithm
+        //launch dijkstra algorithm
         window.draw(hint);
 
         //number of moves recorded
@@ -217,17 +297,7 @@ void game::start()
         m.setString(ss.str());
         window.draw(m);
 
-        if (!dj.pathD.empty())
-        {
-            for (int i = 0; i < dj.pathD.size(); i++)
-            {
-                sPath.setPosition(dj.pathD[i].second * 30 + 5, dj.pathD[i].first * 30 + 5); //Reversed notion of row & column
-                window.draw(sPath);                                                         //final pathD
-                filled[dj.pathD[i].first][dj.pathD[i].second] = 1;
-            }
-        }
-
-        filled[destX][destY] = 1;
+        dj.filled[destX][destY] = 1;
         for (int i = 0; i <= 29 * 30; i += 30)
             for (int j = 0; j <= 29 * 30; j += 30)
             {
@@ -239,24 +309,52 @@ void game::start()
                     window.draw(obstacle);
                 }
 
-                 if (grid[i / 30][j / 30] == 2)
+                if (grid[i / 30][j / 30] == 2)
                 {
-                    
+
                     //draw the immunity
-                    imm.setPosition(j, i);
-                    window.draw(imm);
+                    enemy.setPosition(j, i);
+                    window.draw(enemy);
+
+                    // dj.run(posX, posY, i/30, j/30, grid);
                 }
 
-  if (grid[i / 30][j / 30] == 2&&posY==j/30&&posX==i/30)
+                if (grid[i / 30][j / 30] == 4)
                 {
-                    cout<<"asgfahdghsjd";
-                    
-                        grid[i / 30][j / 30] = 1;
-                        moves+=10;
-                    
-                }                
 
-                else if (dj.visited[i / 30][j / 30] == true && filled[i / 30][j / 30] == 0)
+                    //draw the immunity
+                    immunity.setPosition(j, i);
+                    window.draw(immunity);
+
+                    // dj.run(posX, posY, i/30, j/30, grid);
+                }
+                //Gaining the immunity i.e increasing the moves by 2
+                if (grid[i / 30][j / 30] == 4 && posY == j / 30 && posX == i / 30)
+                {
+
+                    grid[i / 30][j / 30] = 1;
+                    moves += 2;
+                }
+
+                //You killed the enemy and gain the lives
+                if (grid[i / 30][j / 30] == 2 && posY == j / 30 && posX == i / 30)
+                {
+
+                    grid[i / 30][j / 30] = 1;
+                    life++;
+                }
+
+                //enemy attacked you
+                if (grid[i / 30][j / 30] == 3 && posY == j / 30 && posX == i / 30)
+                {
+
+                    cout << "Enemy attacked you!!!";
+                    life--;
+                    player.pSprite(texPlayer);
+                    grid[i / 30][j / 30] = 1;
+                }
+
+                else if (dj.visited[i / 30][j / 30] == 1 && dj.filled[i / 30][j / 30] == 0)
                 {
                     //visited cells in using dijkstra algorithm
                     visitedcell.setOutlineThickness(2);
@@ -266,36 +364,46 @@ void game::start()
                 }
 
                 //if not obstacles,no used in dijkstra algorithm draw the empty path
-                if (grid[i / 30][j / 30] == 1 && dj.visited[i / 30][j / 30] == false && filled[i / 30][j / 30] == 0)
+                if ((grid[i / 30][j / 30] == 1 || grid[i / 30][j / 30] == 3) && !(dj.visited[i / 30][j / 30] == 1) && dj.filled[i / 30][j / 30] == 0)
                 {
                     paths.setPosition(j, i);
                     window.draw(paths);
                 }
             }
-            // player.getSprite().setPosition(posY*30, posX*30);
+
+        if (!dj.pathD.empty())
+        {
+            for (int i = 0; i < dj.pathD.size(); i++)
+            {
+                sPath.setPosition(dj.pathD[i].second * 30 + 5, dj.pathD[i].first * 30 + 5); //Reversed notion of row & column
+                paths.setPosition(dj.pathD[i].second * 30 + 5, dj.pathD[i].first * 30 + 5);
+                window.draw(paths);
+                window.draw(sPath); //final pathD
+                dj.filled[dj.pathD[i].first][dj.pathD[i].second] = 1;
+            }
+        }
+
+        // player.getSprite().setPosition(posY*30, posX*30);
         window.draw(player.getSprite()); //source
 
         princess.setPosition(destY * 30, destX * 30 - 10);
 
         window.draw(princess); //destination
-        cout<<player.getSprite().getPosition().x;
-        cout<<"       "<<player.getSprite().getPosition().x<<endl;
-
-
-
+        // cout << player.getSprite().getPosition().x;
+        // cout << "       " << player.getSprite().getPosition().x << endl;
 
         window.display();
     }
 }
 
-void game:: gameOver(){
-    cout<<"You are out of the moves, so Game Over!";
-
+void game::gameOver()
+{
+    cout << "You are out of the moves, so Game Over!";
 }
 
-void game:: Supriya()
+void game::Supriya()
 {
-    cout<<"Congratulations!!! You are on the next level to find the next princess.";
+    cout << "Congratulations!!! You are on the next level to find the next princess.";
 }
 
 game::~game()

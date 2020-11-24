@@ -6,12 +6,13 @@ dijkstra::dijkstra()
      //set all the distances to maximum float value;theoritically infinity
     for(int i=0;i<num;i++)
         for(int j=0;j<num;j++)
-            dist[i][j]=FLT_MAX;
+            dist[i][j]=INT32_MAX;
+
 }
 
-void dijkstra::findmin(float dist[num][num],int& minX,int& minY){
+void dijkstra::findmin(int dist[num][num],int& minX,int& minY){
     
-    float minimum=FLT_MAX;
+    int minimum=INT32_MAX;
     for(int i=0;i<num;i++)
         for(int j=0;j<num;j++)
             if(visited[i][j]==false && dist[i][j]<minimum){
@@ -21,16 +22,25 @@ void dijkstra::findmin(float dist[num][num],int& minX,int& minY){
             }
 }
 
-void dijkstra:: findpath(pair<int,int> previous[num][num],float dist[num][num],int destX,int destY,int posX,int posY){
-    cout<<"\nLength of Dijkstra path is: "<<dist[destX][destY]<<endl;
-    while(previous[destX][destY].first!=posX || previous[destX][destY].second!=posY){        // both simultaneously equal to source coordinates
-        sf::sleep(sf::milliseconds(10));        //delay shortest pathD
-        cout<<"go to ->\n("<<previous[destX][destY].first<<","<<previous[destX][destY].second<<") ";
-        pathD.push_back(make_pair(previous[destX][destY].first,previous[destX][destY].second));
-        int saveX=destX,saveY=destY;
-        destX=previous[saveX][saveY].first;
-        destY=previous[saveX][saveY].second;
+
+void dijkstra:: findpath(pair<int,int> previous[num][num],int dist[num][num],int destX,int destY,int posX,int posY){
+    if(dist[destX][destY]>100)
+    {
+        failed=true;
+       cout<<"Destination is out of reach, firstly clear the road!!!"; 
     }
+    else
+    {
+        failed=false;
+        cout<<"\nLength of Dijkstra path is: "<<dist[destX][destY]<<endl;
+    while(previous[destX][destY].first!=posX || previous[destX][destY].second!=posY){        // both simultaneously not equal to source coordinates
+        sf::sleep(sf::milliseconds(10));        //delay shortest pathD
+        pathD.push_back(make_pair(previous[destX][destY].first,previous[destX][destY].second));
+        int aX=destX,aY=destY;
+        destX=previous[aX][aY].first;
+        destY=previous[aX][aY].second;
+    }}
+
 }
 
 void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
@@ -41,7 +51,7 @@ void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
     for(int i=0;i<num && reached==0;i++)
         for(int j=0;j<num && reached==0;j++){
             
-            int minX=0,minY=0;
+            
             findmin(dist,minX,minY);
 
             visited[minX][minY]=true;
@@ -97,4 +107,19 @@ void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
             // }
         }
     findpath(previous,dist,destX,destY,posX,posY);
+}
+
+void dijkstra::destroy(){
+        for (int i = 0; i < pathD.size(); i++)
+            {                                                      //final pathD
+                filled[pathD[i].first][pathD[i].second] = 0;
+            }
+     pathD.clear();
+        for (int i = 0; i < num; i++)
+        for (int j = 0; j < num; j++)
+        {
+            if(visited[i][j]==1)
+            {visited[i][j] = 2; }//all cells are unvisited
+        }
+        cout<<"called";
 }
