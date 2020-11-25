@@ -24,6 +24,18 @@ void game::start()
 
     RenderWindow window(VideoMode(1000, 900), "Grid");
 
+    star.loadFromFile("sound/menu.wav");
+    starsound.setBuffer(star);
+
+     ride.loadFromFile("sound/textNoise.wav");
+    rsound.setBuffer(ride);
+
+    killed.loadFromFile("sound/attacked.wav");
+    killsound.setBuffer(killed);
+
+    attacked.loadFromFile("sound/killed.wav");
+    attsound.setBuffer(attacked);
+
     //Loading the font
     font.loadFromFile("arial.ttf");
     Text move("Moves:", font, 15);
@@ -95,8 +107,16 @@ void game::start()
     CircleShape sPath(10);
     sPath.setFillColor(Color::Yellow);
 
+    CircleShape coin(35); //button dijkstra
+    coin.setFillColor(Color::Green);
+
     CircleShape hint(35); //button dijkstra
     hint.setFillColor(Color::Green);
+
+    CircleShape rules(35); //button dijkstra
+    rules.setFillColor(Color::Green);
+
+    // Thread thread(std::bind(&comments,"asdsfdf"));                        
 
     //Creating the obstacles
     for (int i = 0; i < 400; i++)
@@ -173,6 +193,8 @@ void game::start()
                 grid[posX][posY + 1] = 1;
                 grid[posX][posY + 1] = 1;
                 moves -= 8;
+                comments("media/c.png");
+                killsound.play();
             }
 
             if (!grid[posX][posY] == 0 && hints != 0)
@@ -187,6 +209,7 @@ void game::start()
                         {
                             player.moveLeft();
                             posY = posY - 1;
+                            rsound.play();
                             moves--;
                         }
                     }
@@ -196,6 +219,7 @@ void game::start()
                         {
                             player.moveRight();
                             posY = posY + 1;
+                            rsound.play();
                             moves--;
                         }
                     }
@@ -205,6 +229,7 @@ void game::start()
                         {
                             player.moveUp();
                             posX = posX - 1;
+                            rsound.play();
                             moves--;
                         }
                     }
@@ -214,6 +239,7 @@ void game::start()
                         {
                             player.moveDown();
                             posX = posX + 1;
+                            rsound.play();
                             moves--;
                         }
                     }
@@ -229,7 +255,7 @@ void game::start()
                 int col = X / 30;
 
                 cout << "Cell " << row << " , " << col << " state is: " << grid[row][col] << endl;
-                if (X > 900 && X < 975 && Y > 30 && Y < 100)
+                if (X > 900 && X < 975 && Y > 120 && Y < 190)
                 {
                     if (hints == 1)
                     {
@@ -244,7 +270,7 @@ void game::start()
                     else
                     {
                         dj.destroy();
-                        if (dj.failed = true)
+                        if (dj.failed == true)
                         {
                             hints++;
                         }
@@ -267,6 +293,7 @@ void game::start()
         if (life <= 0)
         {
             window.close();
+            gameOver();
             cout << "You are killed by enemy, try again!!!";
         }
         if (posX == destX && posY == destY)
@@ -277,10 +304,18 @@ void game::start()
 
         window.clear();
         window.draw(bg);
-        hint.setPosition(930, 30);
+
+        window.draw(player.getSprite()); //source
+
+        coin.setPosition(930, 40);
+        window.draw(coin);
 
         //launch dijkstra algorithm
+        hint.setPosition(930,120);
         window.draw(hint);
+
+        rules.setPosition(930,200);
+        window.draw(rules);
 
         //number of moves recorded
         move.setPosition(940, 40);
@@ -290,8 +325,8 @@ void game::start()
         window.draw(move);
 
         //to conert int to string
-        stringstream ss, ss1;
-        ss1 << dj.pathD.size();
+        stringstream ss;
+        // ss1 << dj.pathD.size();
 
         ss << moves;
         m.setString(ss.str());
@@ -334,14 +369,41 @@ void game::start()
 
                     grid[i / 30][j / 30] = 1;
                     moves += 2;
+                    comments("media/d.png");
+                    starsound.play();
                 }
 
                 //You killed the enemy and gain the lives
                 if (grid[i / 30][j / 30] == 2 && posY == j / 30 && posX == i / 30)
                 {
+                    int a=i/30,b=j/30;
 
                     grid[i / 30][j / 30] = 1;
                     life++;
+                    comments("media/b.png");
+                    killsound.play();
+
+                     if (grid[a + 1][b + 1] == 3)
+                {
+                    grid[a + 1][b + 1] = 1;
+                }
+
+                if (grid[a + 1][b - 1] == 3)
+                {
+                    grid[a + 1][b - 1] = 1;
+                }
+
+                if (grid[a - 1][b + 1] == 3)
+                {
+                    grid[a - 1][b + 1] = 1;
+                }
+
+                if (grid[a - 1][b - 1] == 3)
+                {
+                    grid[a - 1][b - 1] = 1;
+                }
+
+                    
                 }
 
                 //enemy attacked you
@@ -352,6 +414,9 @@ void game::start()
                     life--;
                     player.pSprite(texPlayer);
                     grid[i / 30][j / 30] = 1;
+                    comments("media/a.png");
+                    attsound.play();
+
                 }
 
                 else if (dj.visited[i / 30][j / 30] == 1 && dj.filled[i / 30][j / 30] == 0)
@@ -384,7 +449,9 @@ void game::start()
         }
 
         // player.getSprite().setPosition(posY*30, posX*30);
+
         window.draw(player.getSprite()); //source
+        
 
         princess.setPosition(destY * 30, destX * 30 - 10);
 
@@ -399,6 +466,24 @@ void game::start()
 void game::gameOver()
 {
     cout << "You are out of the moves, so Game Over!";
+    sf::RenderWindow window;
+window.create(sf::VideoMode(1000, 900), "");
+
+  sf::Texture texture;
+    if (!texture.loadFromFile("media/gameover.png"))
+{
+    // error...
+}
+sf::Sprite sprite;
+sprite.setTexture(texture);
+// sprite.setScale(f,0.7f);
+
+        window.clear();
+        window.draw(sprite);
+        window.display();
+         sf::sleep(sf::milliseconds(9000));
+        // usleep(9000000);
+         window.close();
 }
 
 void game::Supriya()
@@ -408,4 +493,29 @@ void game::Supriya()
 
 game::~game()
 {
+}
+
+void game::comments(string image)
+{
+
+sf::RenderWindow window;
+window.setPosition(Vector2i(690,720));
+window.create(sf::VideoMode(300, 150), "",sf::Style::None);
+
+  sf::Texture texture;
+    if (!texture.loadFromFile(image))
+{
+    // error...
+}
+sf::Sprite sprite;
+sprite.setTexture(texture);
+sprite.setScale(0.7f,0.7f);
+
+        window.clear();
+        window.draw(sprite);
+        window.display();
+         sf::sleep(sf::milliseconds(900));
+        // usleep(9000000);
+         window.close();
+
 }

@@ -12,9 +12,11 @@
 #include<string.h>
 #include<string>
 #include<sstream>
+#include<unistd.h>
 
 #include "dijkstra.hpp"
 #include "player.hpp"
+#include "audio.hpp"
 
 using namespace std;
 using namespace sf;
@@ -32,6 +34,7 @@ class game {
 
     Texture background,texPlayer,texPrincess,path,black,emy,imm;
     Sprite bg,princess,paths,obstacle,enemy,immunity;
+    // audio a;
 
     Font font;
     Clock clock;
@@ -39,10 +42,14 @@ class game {
 
     dijkstra dj;
     Player player;
+
+    void comments(string image);
     
 
 
 public:
+sf::SoundBuffer bgs,attacked,killed,star,hin,win,gover,ride;
+sf::Sound bgsound,attsound,killsound,hinsound,winsound,goversound,starsound,rsound;
 
 
     game();
