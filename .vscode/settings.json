@@ -9,7 +9,12 @@
         "istream": "cpp",
         "ostream": "cpp",
         "utility": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "vector": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp",
+        "future": "cpp",
+        "typeinfo": "cpp"
     },
     "terminal.integrated.shell.windows": "cmd.exe"
 }

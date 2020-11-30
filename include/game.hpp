@@ -16,7 +16,8 @@
 
 #include "dijkstra.hpp"
 #include "player.hpp"
-#include "audio.hpp"
+#include "level2.hpp"
+
 
 using namespace std;
 using namespace sf;
@@ -26,14 +27,17 @@ class game {
     private:
      
     int grid[30][30];       //map with obstacle
-    int posX=2,posY=2,destX=25,destY=26; 
+    int posX=2,posY=2,destX=7,destY=8; 
 
-    int moves=70;
+    int moves=100;
     int life=3;
     int hints=1;
+    int rules=0;
+    int bomb=2;
+    int wins=0;
 
-    Texture background,texPlayer,texPrincess,path,black,emy,imm;
-    Sprite bg,princess,paths,obstacle,enemy,immunity;
+    Texture background,texPlayer,texPrincess,path,black,emy,imm,texrule,texwin;
+    Sprite bg,princess,paths,obstacle,enemy,immunity,ruleset,winpage;
     // audio a;
 
     Font font;
@@ -42,6 +46,7 @@ class game {
 
     dijkstra dj;
     Player player;
+    level2 l2;
 
     void comments(string image);
     
@@ -56,6 +61,6 @@ sf::Sound bgsound,attsound,killsound,hinsound,winsound,goversound,starsound,rsou
     ~game();
 
     void start();
-    void Supriya();
+    void nextlevel();
     void gameOver();
 };

@@ -33,7 +33,7 @@ void dijkstra:: findpath(pair<int,int> previous[num][num],int dist[num][num],int
     {
         failed=false;
         cout<<"\nLength of Dijkstra path is: "<<dist[destX][destY]<<endl;
-    while(previous[destX][destY].first!=posX || previous[destX][destY].second!=posY){        // both simultaneously not equal to source coordinates
+        while(previous[destX][destY].first!=posX || previous[destX][destY].second!=posY){        // both simultaneously not equal to source coordinates
         sf::sleep(sf::milliseconds(10));        //delay shortest pathD
         pathD.push_back(make_pair(previous[destX][destY].first,previous[destX][destY].second));
         int aX=destX,aY=destY;
@@ -62,22 +62,22 @@ void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
             }
             sf::sleep(sf::milliseconds(1));        //delay exploration
             //north
-            if(grid[minX-1][minY]==1 && visited[minX-1][minY]==false && dist[minX-1][minY]>dist[minX][minY]+1.0){
+            if(grid[minX-1][minY]!=0 && grid[minX-1][minY]!=3 && visited[minX-1][minY]==false && dist[minX-1][minY]>dist[minX][minY]+1.0){
                 dist[minX-1][minY]=dist[minX][minY]+1.0;
                 previous[minX-1][minY]=make_pair(minX,minY);
             }
             //south
-            if(grid[minX+1][minY]==1 && visited[minX+1][minY]==false && dist[minX+1][minY]>dist[minX][minY]+1.0){
+            if(grid[minX+1][minY]!=0 && grid[minX+1][minY]!=3 && visited[minX+1][minY]==false && dist[minX+1][minY]>dist[minX][minY]+1.0){
                 dist[minX+1][minY]=dist[minX][minY]+1.0;
                 previous[minX+1][minY]=make_pair(minX,minY);
             }
             //west
-            if(grid[minX][minY-1]==1 && visited[minX][minY-1]==false && dist[minX][minY-1]>dist[minX][minY]+1.0){
+            if(grid[minX][minY-1]!=0 && grid[minX][minY-1]!=3 && visited[minX][minY-1]==false && dist[minX][minY-1]>dist[minX][minY]+1.0){
                 dist[minX][minY-1]=dist[minX][minY]+1.0;
                 previous[minX][minY-1]=make_pair(minX,minY);
             }
             //east:i,j+1
-            if(grid[minX][minY+1]==1 && visited[minX][minY+1]==false && dist[minX][minY+1]>dist[minX][minY]+1.0){
+            if(grid[minX][minY+1]!=0 && grid[minX][minY+1]!=3 && visited[minX][minY+1]==false && dist[minX][minY+1]>dist[minX][minY]+1.0){
                 dist[minX][minY+1]=dist[minX][minY]+1.0;
                 previous[minX][minY+1]=make_pair(minX,minY);
             }
@@ -119,7 +119,7 @@ void dijkstra::destroy(){
         for (int j = 0; j < num; j++)
         {
             if(visited[i][j]==1)
-            {visited[i][j] = 2; }//all cells are unvisited
+            {visited[i][j] = 0; }//all cells are unvisited
         }
         cout<<"called";
 }
