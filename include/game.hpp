@@ -30,7 +30,7 @@ class game {
     int posX=2,posY=2,destX=7,destY=8; 
 
     int moves=100;
-    int life=3;
+    int life=1;
     int hints=1;
     int rules=0;
     int bomb=2;
