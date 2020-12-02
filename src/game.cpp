@@ -1,5 +1,5 @@
-#include "game.hpp"
-#include "windows.hpp"
+#include "game.h"
+#include "windows.h"
 
 game::game()
 {

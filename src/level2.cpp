@@ -1,5 +1,3 @@
-
-
 #include "level2.hpp"
 #include "windows.hpp"
 
