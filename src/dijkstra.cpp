@@ -62,22 +62,22 @@ void dijkstra::run(int posX,int posY,int destX,int destY,int grid[num][num]){
             }
             sf::sleep(sf::milliseconds(1));        //delay exploration
             //north
-            if(grid[minX-1][minY]!=0 && grid[minX-1][minY]!=3 && visited[minX-1][minY]==false && dist[minX-1][minY]>dist[minX][minY]+1.0){
+            if(grid[minX-1][minY]!=0  && visited[minX-1][minY]==false && dist[minX-1][minY]>dist[minX][minY]+1.0){
                 dist[minX-1][minY]=dist[minX][minY]+1.0;
                 previous[minX-1][minY]=make_pair(minX,minY);
             }
             //south
-            if(grid[minX+1][minY]!=0 && grid[minX+1][minY]!=3 && visited[minX+1][minY]==false && dist[minX+1][minY]>dist[minX][minY]+1.0){
+            if(grid[minX+1][minY]!=0  && visited[minX+1][minY]==false && dist[minX+1][minY]>dist[minX][minY]+1.0){
                 dist[minX+1][minY]=dist[minX][minY]+1.0;
                 previous[minX+1][minY]=make_pair(minX,minY);
             }
             //west
-            if(grid[minX][minY-1]!=0 && grid[minX][minY-1]!=3 && visited[minX][minY-1]==false && dist[minX][minY-1]>dist[minX][minY]+1.0){
+            if(grid[minX][minY-1]!=0  && visited[minX][minY-1]==false && dist[minX][minY-1]>dist[minX][minY]+1.0){
                 dist[minX][minY-1]=dist[minX][minY]+1.0;
                 previous[minX][minY-1]=make_pair(minX,minY);
             }
             //east:i,j+1
-            if(grid[minX][minY+1]!=0 && grid[minX][minY+1]!=3 && visited[minX][minY+1]==false && dist[minX][minY+1]>dist[minX][minY]+1.0){
+            if(grid[minX][minY+1]!=0  && visited[minX][minY+1]==false && dist[minX][minY+1]>dist[minX][minY]+1.0){
                 dist[minX][minY+1]=dist[minX][minY]+1.0;
                 previous[minX][minY+1]=make_pair(minX,minY);
             }

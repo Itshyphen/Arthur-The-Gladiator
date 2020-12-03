@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "MainMenu.hpp"
+#include "MainMenu.h"
 using namespace std;
 
 class gameWindows
@@ -11,7 +11,7 @@ public:
 	gameWindows(string image)
 	{
 
-		sf::RenderWindow window(sf::VideoMode(1000, 900), "---Game Over---");
+		sf::RenderWindow window(sf::VideoMode(1000, 650), "---Game Over---");
 
 		sf::Texture gOvertex;
 		if (!gOvertex.loadFromFile(image))
@@ -21,7 +21,6 @@ public:
 
 		sf::Sprite gOver;
 		gOver.setTexture(gOvertex);
-		gOver.setScale(1000 / gOver.getGlobalBounds().width, 900 / gOver.getGlobalBounds().height);
 
 		while (window.isOpen())
 		{
@@ -43,11 +42,11 @@ public:
 					int mouseY = event.mouseButton.y;
 
 
-					if (mouseX > 600 && mouseX < 850 && mouseY > 554 && mouseY < 692)
+					if (mouseX > 600 && mouseX < 850 && mouseY > 400 && mouseY < 500)
 					{
 						window.close();
 					}
-					else if (mouseX > 150 && mouseX < 450 && mouseY > 554 && mouseY < 692)
+					else if (mouseX > 150 && mouseX < 450 && mouseY > 400 && mouseY < 500)
 					{
 						window.close();
 						MainMenu m;
@@ -68,3 +67,5 @@ public:
 
 
 };
+
+
