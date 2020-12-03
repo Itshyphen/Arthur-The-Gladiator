@@ -14,9 +14,9 @@
 #include<sstream>
 //#include<unistd.h>
 
-#include "dijkstra.h"
-#include "player.h"
-#include "level2.h"
+#include "dijkstra.hpp"
+#include "player.hpp"
+#include "level2.hpp"
 
 
 using namespace std;
@@ -46,7 +46,6 @@ private:
 
 	dijkstra dj;
 	Player player;
-	level2 l2;
 
 	void comments(string image);
 
@@ -60,7 +59,7 @@ public:
 	game();
 	~game();
 
-	void start();
-	void nextlevel();
+	void start(sf::RenderWindow &window);
+	void nextlevel(sf::RenderWindow &window);
 	void gameOver();
 };

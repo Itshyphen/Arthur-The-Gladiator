@@ -5,7 +5,7 @@
 using namespace sf;
 #define N 12
 
-level2::level2()
+level2::level2(sf::RenderWindow window)
 {
 
 }
@@ -64,9 +64,9 @@ void level2::reset(int A, int B)
 	}
 }
 
-void level2::start()
+void level2::start(sf::RenderWindow &window)
 {
-	sf::RenderWindow renderOpeningWindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 2)");
+	// sf::RenderWindow window(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 2)");
 	sf::Texture intro;
 	intro.loadFromFile("media/level2.png");
 	sf::Sprite intro2;
@@ -75,39 +75,37 @@ void level2::start()
 
 	sf::Event event;
 	//draw the intro page
-	while (renderOpeningWindow.isOpen())
+	while (window.isOpen())
 	{
 
-		while (renderOpeningWindow.pollEvent(event))
+		while (window.pollEvent(event))
 		{
 
 			if (event.type == sf::Event::EventType::Closed)
-				renderOpeningWindow.close();
+				window.close();
 
 			int X = event.mouseButton.x;
 			int Y = event.mouseButton.y;
 
 			if (X > 700 && X < 950 && Y > 692 && Y < 830)
 			{
-				renderOpeningWindow.close();
-				startGame();
+				startGame(window);
 			}
 
              if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
 			{
-               renderOpeningWindow.close();
-				startGame();
+				startGame(window);
             }
 		}
-		renderOpeningWindow.clear();
-		renderOpeningWindow.draw(intro2);
-		renderOpeningWindow.display();
+		window.clear();
+		window.draw(intro2);
+		window.display();
 	}
 }
 
-void level2::startGame(){
+void level2::startGame(sf::RenderWindow &gamewindow){
 
-	sf::RenderWindow gamewindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3):Knight Move", sf::Style::Default);
+	// sf::RenderWindow gamewindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3):Knight Move", sf::Style::Default);
 	CircleShape coin(35); //for displaying no of moves
 	coin.setFillColor(Color::Black);
 	coin.setOutlineThickness(2);
@@ -298,14 +296,13 @@ void level2::startGame(){
 		if (moves < 0)
 		{
 
-			gamewindow.close();
-			gameWindows g("media/gameover.png");
+			// gamewindow.close();
+			gameWindows g("media/gameover.png",gamewindow);
 		}
 
 		if (posX == destX && posY == destY)
 		{
-			gamewindow.close();
-			nextlevel();
+			nextlevel(gamewindow);
 
 		}
 
@@ -453,10 +450,10 @@ void level2::startGame(){
 
 }
 
-void level2::nextlevel() {
+void level2::nextlevel(sf::RenderWindow &window) {
 
 
-	sf::RenderWindow window;
+	// sf::RenderWindow window;
 
 	sf::RectangleShape next, exit;
 	GameLevel3 l3(moves);
@@ -464,7 +461,7 @@ void level2::nextlevel() {
 	sf::Texture texbg;
 	sf::Sprite bg;
 
-	window.create(sf::VideoMode(1000, 900), "Arthur-The Gradiator", sf::Style::Default);
+	// window.create(sf::VideoMode(1000, 900), "Arthur-The Gradiator", sf::Style::Default);
 
 	texbg.loadFromFile("media/win2.png");
 	bg.setTexture(texbg);
@@ -488,17 +485,18 @@ void level2::nextlevel() {
 
 				if (X > 700 && X < 1000 && Y > 692 && Y < 900)
 				{
-					window.close();
-					l3.start();
+					// window.close();
+					l3.start(window);
 				}
 			}
 
              if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
 			{
-                    window.close();
-					l3.start();
+                    // window.close();
+					l3.start(window);
             }
 		}
+		
 
 		window.clear();
 		window.draw(bg);

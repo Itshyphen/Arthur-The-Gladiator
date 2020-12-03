@@ -174,9 +174,8 @@ void MainMenu::Intro()
 		//put on sleep for 4 seconds
 		sf::sleep(sf::seconds(4));
 	}
-	window1.close();
 	game game;
-	game.start();
+	game.start(window1);
 
 }
 

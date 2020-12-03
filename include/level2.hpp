@@ -11,8 +11,8 @@
 #include<string>
 #include<sstream>
 
-#include "level3.h"
-#include "bfs.h"
+#include "level3.hpp"
+#include "bfs.hpp"
 
 using namespace std;
 #define N 12
@@ -20,17 +20,17 @@ using namespace std;
 class level2
 {
 public:
-	level2();
+	level2(sf::RenderWindow);
 	level2(int move, int lfe);
 	~level2() {//...
 	}
 
 
-	void start();
+	void start(sf::RenderWindow &window);
 	void valid(int x, int y);
 	void reset(int x, int y);
-	void nextlevel();
-	void startGame();
+	void nextlevel(sf::RenderWindow &window);
+	void startGame(sf::RenderWindow &window);
 	//drawing chessboard size 8*8
 	sf::RectangleShape tileMap[N][N];
 

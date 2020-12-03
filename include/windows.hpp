@@ -8,10 +8,10 @@ using namespace std;
 class gameWindows
 {
 public:
-	gameWindows(string image)
+	gameWindows(string image, sf::RenderWindow &window)
 	{
 
-		sf::RenderWindow window(sf::VideoMode(1000, 900), "---Game Over---");
+		// sf::RenderWindow window(sf::VideoMode(1000, 900), "---Game Over---");
 
 		sf::Texture gOvertex;
 		if (!gOvertex.loadFromFile(image))

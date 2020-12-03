@@ -36,13 +36,15 @@ GameLevel3::GameLevel3(int movesRemaining)
 	}
 }
 
-void GameLevel3::start()
+void GameLevel3::start(sf::RenderWindow &renderOpeningWindow)
 {
-	sf::RenderWindow renderOpeningWindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3)");
+	// sf::RenderWindow renderOpeningWindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3)");
 	sf::Texture intro;
 	intro.loadFromFile("media/level3.png");
 	sf::Sprite intro3;
 	intro3.setTexture(intro);
+
+	intro3.setScale(1000/intro3.getGlobalBounds().width,900/intro3.getGlobalBounds().height);
 
 	//draw the intro page
 	while (renderOpeningWindow.isOpen())
@@ -53,8 +55,8 @@ void GameLevel3::start()
 
 			  if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
 			{
-               renderOpeningWindow.close();
-				setVector();
+            //    renderOpeningWindow.close();
+				setVector(renderOpeningWindow);
             }
 
 			if (event.type == sf::Event::EventType::Closed)
@@ -65,8 +67,8 @@ void GameLevel3::start()
 
 			if (X > 700 && X < 950 && Y > 692 && Y < 832)
 			{
-				renderOpeningWindow.close();
-				setVector();
+				// renderOpeningWindow.close();
+				setVector(renderOpeningWindow);
 			}
 		}
 		renderOpeningWindow.clear();
@@ -76,9 +78,10 @@ void GameLevel3::start()
 }
 
 //MAIN SCREEN
-void GameLevel3::setVector()
+void GameLevel3::setVector(sf::RenderWindow &renderWindow)
 {
-	sf::RenderWindow renderWindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3)");
+	// sf::RenderWindow renderWindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3)");
+	// renderWindow=window;
 	sf::RectangleShape selectSquare(sf::Vector2f(85, 85));
 	selectSquare.setFillColor(sf::Color::Transparent);
 	selectSquare.setOutlineColor(sf::Color::White);
@@ -417,22 +420,22 @@ void GameLevel3::setVector()
 		renderWindow.display();
 		if (noMoves || giveUp || gameWon)
 		{
-			gameOver();
+			gameOver(renderWindow);
 			// renderWindow.close();
 		}
 	}
 }
 
-void GameLevel3::gameOver()
+void GameLevel3::gameOver(sf::RenderWindow &renderWindow)
 {
 	std::this_thread::sleep_for(1.5s);
-	renderWindow.close();
+	// renderWindow.close();
 	if (gameWon)
 	{
 		std::cout << "Congratulations! You won with " << playerMoves << " moves remaining!" << std::endl;
 		gameWon = 0;
-		renderWindow.close();
-		gameWindows g("media/winner.png");
+		// renderWindow.close();
+		gameWindows g("media/winner.png",renderWindow);
 	}
 	else
 	{
@@ -445,7 +448,7 @@ void GameLevel3::gameOver()
 			std::cout << "You gave up with " << playerMoves << " moves remaining!" << std::endl;
 			giveUp = 0;
 		}
-		renderWindow.close();
-		gameWindows g("media/gameover.png");
+		// renderWindow.close();
+		gameWindows g("media/gameover.png",renderWindow);
 	}
 }

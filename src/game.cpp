@@ -23,10 +23,10 @@ game::game()
 	destY = 26;
 }
 
-void game::start()
+void game::start(sf::RenderWindow &window)
 {
 
-	RenderWindow window(VideoMode(1002, 900), "Level 1");
+	// RenderWindow window(VideoMode(1002, 900), "Level 1");
 
 	star.loadFromFile("sound/menu.wav");
 	starsound.setBuffer(star);
@@ -334,25 +334,25 @@ void game::start()
 		//If the moves ends,gameover
 		if (moves <= 0)
 		{
-			window.close();
-			gameWindows("media/gameover.png");
+			// window.close();
+			gameWindows("media/gameover.png",window);
 		}
 
 
 		//I f the life of player get equals to zero,gameover
 		if (life <= 0)
 		{
-			window.close();
-			gameWindows g("media/gameover.png");
+			// window.close();
+			gameWindows g("media/gameover.png",window);
 			cout << "You are killed by enemy, try again!!!";
 		}
 
 		//if player position is equal to the destination position, you win the level.
 		if (posX == destX && posY == destY)
 		{
-			window.close();
+			// window.close();
 			cout << "Congratulations!!! You are on the next level to find the next princess.";
-			nextlevel();
+			nextlevel(window);
 		}
 
 		window.clear();
@@ -585,9 +585,8 @@ void game::comments(string image)
 	window.close();
 }
 
-void game::nextlevel()
+void game::nextlevel(sf::RenderWindow &window)
 {
-	sf::RenderWindow window;
 
 	sf::RectangleShape next, exit;
 	level2 l2(moves, life);
@@ -595,7 +594,7 @@ void game::nextlevel()
 	sf::Texture texbg;
 	sf::Sprite bg;
 
-	window.create(sf::VideoMode(1000, 900), "Arthur-The Gradiator", sf::Style::Default);
+	// window.create(sf::VideoMode(1000, 900), "Arthur-The Gradiator", sf::Style::Default);
 
 	texbg.loadFromFile("media/win1.png");
 	bg.setTexture(texbg);
@@ -612,8 +611,8 @@ void game::nextlevel()
 
                 if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
 			{
-                window.close();
-				l2.start();
+                // window.close();
+				l2.start(window);
             }
 
 
@@ -626,8 +625,8 @@ void game::nextlevel()
 
 				if (X > 700 && X < 1000 && Y > 692 && Y < 900)
 				{
-					window.close();
-					l2.start();
+					// window.close();
+					l2.start(window);
 				}
 			}
 		}
