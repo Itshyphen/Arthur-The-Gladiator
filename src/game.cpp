@@ -56,12 +56,12 @@ void game::start(sf::RenderWindow &window)
     Text bb(" ", font, 15);
 
 	//Texture for empty cells
-	if (!path.loadFromFile("media/bg.jpg", sf::IntRect(500, 400, 30, 30)))
+	if (!path.loadFromFile("media/bg.jpg", sf::IntRect(500, 400, gridSize, gridSize)))
 	{
 		cout << "Unable to load image!";
 	}
 	//texture for obstacles
-	if (!black.loadFromFile("media/bg.jpg", sf::IntRect(400, 400, 30, 30)))
+	if (!black.loadFromFile("media/bg.jpg", sf::IntRect(400, 400, gridSize, gridSize)))
 	{
 		cout << "Unable to load image!";
 	}
@@ -156,7 +156,7 @@ void game::start(sf::RenderWindow &window)
 	//Creating the obstacles
 	for (int i = 0; i < 400; i++)
 	{
-		int a = rand() % 30, b = rand() % 30;
+		int a = rand() % num, b = rand() % num;
 
 		grid[a][b] = 0;
 		grid[destX][destY] = 1;
@@ -166,7 +166,7 @@ void game::start(sf::RenderWindow &window)
 	//Creating the immunity
 	for (int i = 0; i < 20; i++)
 	{
-		int a = rand() % 30, b = rand() % 30;
+		int a = rand() % num, b = rand() % num;
 		if (!((a == posY && b == posX) || (a == destY && b == destX)) && !(grid[a][b] == 2 || grid[a][b] == 3 || grid[a][b] == 0))
 		{
 			grid[a][b] = 4;
@@ -176,7 +176,7 @@ void game::start(sf::RenderWindow &window)
 	//Creating the enemy
 	for (int i = 0; i < 20; i++)
 	{
-		int a = (rand() + 50) % 30, b = (rand() + 50) % 30;
+		int a = (rand() + 50) % num, b = (rand() + 50) % num;
 		if (!((a == posY && b == posX) || (a == destY && b == destX)))
 		{
 			if (grid[a][b] == 1 && (a > 4 || b > 4))
@@ -419,24 +419,24 @@ void game::start(sf::RenderWindow &window)
 		window.draw(bb);
 
 		dj.filled[destX][destY] = 1;
-		for (int i = 0; i <= 29 * 30; i += 30)
-			for (int j = 0; j <= 29 * 30; j += 30)
+		for (int i = 0; i < gridSize * num; i += 30)
+			for (int j = 0; j < gridSize * num; j += 30)
 			{
 				//if not obstacles,no used in dijkstra algorithm draw the empty path
-				if ((grid[i / 30][j / 30] == 1 || grid[i / 30][j / 30] == 3 || grid[i / 30][j / 30] == 2 || grid[i / 30][j / 30] == 4))
+				if ((grid[i / num][j / num] == 1 || grid[i / num][j / num] == 3 || grid[i / num][j / num] == 2 || grid[i / num][j / num] == 4))
 				{
 					paths.setPosition(j, i);
 					window.draw(paths);
 				}
 
-				if (grid[i / 30][j / 30] == 0)
+				if (grid[i / num][j / num] == 0)
 				{
 					//draw the obstacles
 					obstacle.setPosition(j, i);
 					window.draw(obstacle);
 				}
 
-				if (grid[i / 30][j / 30] == 2)
+				if (grid[i / num][j / num] == 2)
 				{
 
 					//draw the enmy
@@ -446,7 +446,7 @@ void game::start(sf::RenderWindow &window)
 					// dj.run(posX, posY, i/30, j/30, grid);
 				}
 
-				if (grid[i / 30][j / 30] == 4)
+				if (grid[i / num][j / num] == 4)
 				{
 
 					//draw the immunity
@@ -456,21 +456,21 @@ void game::start(sf::RenderWindow &window)
 					// dj.run(posX, posY, i/30, j/30, grid);
 				}
 				//Gaining the immunity i.e increasing the moves by 2
-				if (grid[i / 30][j / 30] == 4 && posY == j / 30 && posX == i / 30)
+				if (grid[i / num][j / num] == 4 && posY == j / num && posX == i / num)
 				{
 
-					grid[i / 30][j / 30] = 1;
+					grid[i / num][j / num] = 1;
 					moves += 2;
 					comments("media/d.png");
 					starsound.play();
 				}
 
 				//player killed the enemy and gain the lives
-				if (grid[i / 30][j / 30] == 2 && posY == j / 30 && posX == i / 30)
+				if (grid[i / num][j / num] == 2 && posY == j / num && posX == i / num)
 				{
-					int a = i / 30, b = j / 30;
+					int a = i / num, b = j / num;
 
-					grid[i / 30][j / 30] = 1;
+					grid[i / num][j / num] = 1;
 					life++;
 					comments("media/b.png");
 					killsound.play();
@@ -498,18 +498,18 @@ void game::start(sf::RenderWindow &window)
 
 				//if enemy position and player position is same, then the player is 
 				//attacked and loses a life
-				if (grid[i / 30][j / 30] == 3 && posY == j / 30 && posX == i / 30)
+				if (grid[i / num][j / num] == 3 && posY == j / num && posX == i / num)
 				{
 
 					cout << "Enemy attacked you!!!";
 					life--;
 					player.pSprite(texPlayer);
-					grid[i / 30][j / 30] = 1;
+					grid[i / num][j / num] = 1;
 					comments("media/a.png");
 					attsound.play();
 				}
 
-				else if (dj.visited[i / 30][j / 30] == 1 && dj.filled[i / 30][j / 30] == 0)
+				else if (dj.visited[i / num][j / num] == 1 && dj.filled[i / num][j / num] == 0)
 				{
 					//visited cells in using dijkstra algorithm
 					visitedcell.setOutlineThickness(2);
@@ -524,8 +524,8 @@ void game::start(sf::RenderWindow &window)
 		{
 			for (int i = 0; i < dj.pathD.size(); i++)
 			{
-				sPath.setPosition(dj.pathD[i].second * 30 + 5, dj.pathD[i].first * 30 + 5); //Reversed notion of row & column
-				paths.setPosition(dj.pathD[i].second * 30 + 5, dj.pathD[i].first * 30 + 5);
+				sPath.setPosition(dj.pathD[i].second * num + 5, dj.pathD[i].first * num + 5); //Reversed notion of row & column
+				paths.setPosition(dj.pathD[i].second * num + 5, dj.pathD[i].first * num + 5);
 				window.draw(paths);
 				window.draw(sPath); //final pathD
 				dj.filled[dj.pathD[i].first][dj.pathD[i].second] = 1;
@@ -536,7 +536,7 @@ void game::start(sf::RenderWindow &window)
 		window.draw(player.getSprite()); //source
 
 //set the position of princess and draw it
-		princess.setPosition(destY * 30, destX * 30 - 10);
+		princess.setPosition(destY * gridSize, destX * gridSize - 10);
 		window.draw(princess); //destination
 
 		//if rules is clicked display the rules
@@ -620,8 +620,6 @@ void game::nextlevel(sf::RenderWindow &window)
 			{
 				int X = event.mouseButton.x;
 				int Y = event.mouseButton.y;
-				int row = Y / 30; //Reversed notion of row & column
-				int col = X / 30;
 
 				if (X > 700 && X < 1000 && Y > 692 && Y < 900)
 				{

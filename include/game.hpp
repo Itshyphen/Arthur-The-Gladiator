@@ -18,6 +18,7 @@
 #include "player.hpp"
 #include "level2.hpp"
 
+#define num 30
 
 using namespace std;
 using namespace sf;
@@ -26,8 +27,9 @@ class game {
 
 private:
 
-	int grid[30][30];       //map with obstacle
+	int grid[num][num];       //map with obstacle
 	int posX = 2, posY = 2, destX = 7, destY = 8;
+    int gridSize=30;
 
 	int moves = 100;
 	int life = 1;
