@@ -15,4 +15,4 @@ Ranju G.C.(075BCT064)
 
 Shreem Arjyal(075BCT084)
 
-SUPRIYA kHADKA(075BCT090)
+Supriya Khadka(075BCT090)
