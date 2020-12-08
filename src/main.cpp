@@ -1,14 +1,12 @@
 
 #include<iostream>
 #include "MainMenu.hpp"
-#include "level3.hpp"
+#include "level2.hpp"
 
 using namespace std;
 
 int main()
 {
-    // game game;
-    // game.start();
 
     MainMenu menu;
     menu.Start();

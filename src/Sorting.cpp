@@ -145,6 +145,7 @@ int Sorting::findIndex()
 			return i + 1;
 		}
 	}
+
 }
 
 vector<int> Sorting::getSort()

@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "windows.hpp"
 
+
 game::game()
 {
 	for (int i = 0; i < num; i++)

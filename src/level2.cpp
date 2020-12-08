@@ -2,16 +2,17 @@
 #include "windows.hpp"
 
 
+
 using namespace sf;
 #define N 12
 
-level2::level2(sf::RenderWindow window)
+level2::level2()
 {
-
 }
 
 level2::level2(int move, int lfe)
 {
+	srand((unsigned) time(0));
 	moves = move;
 	life = lfe;
 
@@ -20,6 +21,25 @@ level2::level2(int move, int lfe)
 
 	posX = rand() % N;
 	posY = rand() % N;
+
+	ride.loadFromFile("sound/textNoise.wav");
+	rsound.setBuffer(ride);
+
+	killed.loadFromFile("sound/attacked.wav");
+	killsound.setBuffer(killed);
+
+	attacked.loadFromFile("sound/killed.wav");
+	attsound.setBuffer(attacked);
+
+	// posX = 0, posY = 5, destX = 11, destY = 11;
+
+	for (int x = 0; x < N; x++)
+	{
+		for (int y = 0; y < N; y++)
+		{
+			grid[x][y] = 1;
+		}
+	}
 }
 
 void level2::valid(int x, int y)
@@ -27,7 +47,9 @@ void level2::valid(int x, int y)
 {
 	if (x >= 0 && x < N && y >= 0 && y < N)
 	{
-		tileMap[x][y].setFillColor(sf::Color::Yellow);
+		tileMap[x][y].setFillColor(sf::Color::Transparent);
+		tileMap[x][y].setOutlineColor(sf::Color::Yellow);
+		tileMap[x][y].setOutlineThickness(4);
 	}
 }
 
@@ -70,8 +92,8 @@ void level2::start(sf::RenderWindow &window)
 	sf::Texture intro;
 	intro.loadFromFile("media/level2.png");
 	sf::Sprite intro2;
-	intro2 .setTexture(intro);
-    intro2.setScale(1000 / intro2.getGlobalBounds().width, 900 / intro2.getGlobalBounds().height);
+	intro2.setTexture(intro);
+	intro2.setScale(1000 / intro2.getGlobalBounds().width, 900 / intro2.getGlobalBounds().height);
 
 	sf::Event event;
 	//draw the intro page
@@ -92,10 +114,10 @@ void level2::start(sf::RenderWindow &window)
 				startGame(window);
 			}
 
-             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
+			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
 			{
 				startGame(window);
-            }
+			}
 		}
 		window.clear();
 		window.draw(intro2);
@@ -103,7 +125,8 @@ void level2::start(sf::RenderWindow &window)
 	}
 }
 
-void level2::startGame(sf::RenderWindow &gamewindow){
+void level2::startGame(sf::RenderWindow &gamewindow)
+{
 
 	// sf::RenderWindow gamewindow(sf::VideoMode(1000, 900), "Arthur- The Gladiator (Level 3):Knight Move", sf::Style::Default);
 	CircleShape coin(35); //for displaying no of moves
@@ -152,10 +175,22 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 	background.setTexture(texback);
 
 	//knight texture
-	if (!texknight.loadFromFile("media/knight.png", sf::IntRect(0, 100, 50, 50)));
+	if (!texknight.loadFromFile("media/knight.png", sf::IntRect(0, 100, 50, 50)))
+		;
 	{
 		//std::cout << "Error loading paddle texture :(" << std::endl;
 	}
+
+	//ememy texture
+	if (!emy.loadFromFile("media/enemy.png", sf::IntRect(0, 0, 256, 2030)))
+	{
+		cout << "Unable to load image!";
+	}
+
+	enemy.setTexture(emy);
+	enemy.setTextureRect(sf::IntRect(0, 470, 256, 346));
+	enemy.setScale(0.3f, 0.3f);
+
 	knight.setTexture(texknight);
 	knight.setScale(1.3f, 1.3f);
 	knight.setPosition(static_cast<float>(posX * gridSizef), static_cast<float>(posY * gridSizef));
@@ -187,18 +222,62 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 	display.setPosition(1000, 1000);
 
 	//Represent the Shortest path using bfs
-	sf::CircleShape sPath(25);
+	sPath.setRadius(35);
 	sPath.setFillColor(sf::Color(181, 101, 29));
 	sPath.setOutlineColor(sf::Color::White);
 	sPath.setOutlineThickness(2);
 
+	//Creating the enemy
+	for (int i = 0; i < 20; i++)
+	{
+		
+		int a = rand() % N, b = rand() % N;
+		if (!((a == destX && b == destY)))
+		{
+			if ((a > 4 || b > 4))
+			{
+				grid[a][b] = 2;
+			}
+			if (grid[a][b] == 2)
+			{
+				if (grid[a + 1][b + 1] == 1)
+				{
+					grid[a + 1][b + 1] = 3;
+				}
+
+				if (grid[a + 1][b - 1] == 1)
+				{
+					grid[a + 1][b - 1] = 3;
+				}
+
+				if (grid[a - 1][b + 1] == 1)
+				{
+					grid[a - 1][b + 1] = 3;
+				}
+
+				if (grid[a - 1][b - 1] == 1)
+				{
+					grid[a - 1][b - 1] = 3;
+				}
+			}
+		}
+	}
+
+	//Creating the immunity
+	for (int i = 0; i < 20; i++)
+	{
+		int a = rand() % N, b = rand() % N;
+		if (!((a == posX && b == posY) || (a == destX && b == destY)) && !(grid[a][b] == 2 || grid[a][b] == 3 || grid[a][b] == 0))
+		{
+			grid[a][b] = 4;
+		}
+	}
 
 	//window events
 	while (gamewindow.isOpen())
 	{
 
 		sf::Event event;
-
 
 		while (gamewindow.pollEvent(event))
 		{
@@ -211,7 +290,7 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 				//tracks the location where mouse button is pressed
 				int mouseX = event.mouseButton.x;
 				int mouseY = event.mouseButton.y;
-				cout << mouseX << " " << mouseY << endl;
+				// cout << mouseX << " " << mouseY << endl;
 				//track the present location of knight and princess
 				posX = knight.getPosition().x;
 				posY = knight.getPosition().y;
@@ -221,60 +300,77 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 				//movement of knight inside the board
 				if (mouseX < 900 && mouseY < 900)
 				{
+					rsound.play();
 					//top left
-					if (mouseX > (posX - 2 * gridSizef) && mouseX < (posX - 1 * gridSizef) && mouseY >(posY - 1 * gridSizef) && mouseY < (posY - 0 * gridSizef))
+					if (mouseX > (posX - 2 * gridSizef) && mouseX < (posX - 1 * gridSizef) && mouseY > (posY - 1 * gridSizef) && mouseY < (posY - 0 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX - 2 * gridSizef), static_cast<float>(posY - 1 * gridSizef));
+						posX -= 2;
+						posY -= 1;
 						moves--;
 					}
 					//top mid left
-					else if (mouseX > (posX - 1 * gridSizef) && mouseX < (posX - 0 * gridSizef) && mouseY >(posY - 2 * gridSizef) && mouseY < (posY - 1 * gridSizef))
+					else if (mouseX > (posX - 1 * gridSizef) && mouseX < (posX - 0 * gridSizef) && mouseY > (posY - 2 * gridSizef) && mouseY < (posY - 1 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX - 1 * gridSizef), static_cast<float>(posY - 2 * gridSizef));
+						posX -= 1;
+						posY -= 2;
 						moves--;
 					}
 					//top mid right
-					else if (mouseX > (posX + 1 * gridSizef) && mouseX < (posX + 2 * gridSizef) && mouseY >(posY - 2 * gridSizef) && mouseY < (posY - 1 * gridSizef))
+					else if (mouseX > (posX + 1 * gridSizef) && mouseX < (posX + 2 * gridSizef) && mouseY > (posY - 2 * gridSizef) && mouseY < (posY - 1 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX + 1 * gridSizef), static_cast<float>(posY - 2 * gridSizef));
+						posX += 1;
+						posY -= 2;
 						moves--;
 					}
 					//top right
-					else if (mouseX > (posX + 2 * gridSizef) && mouseX < (posX + 3 * gridSizef) && mouseY >(posY - 1 * gridSizef) && mouseY < (posY - 0 * gridSizef))
+					else if (mouseX > (posX + 2 * gridSizef) && mouseX < (posX + 3 * gridSizef) && mouseY > (posY - 1 * gridSizef) && mouseY < (posY - 0 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX + 2 * gridSizef), static_cast<float>(posY - 1 * gridSizef));
+						posX += 2;
+						posY -= 1;
 						moves--;
 					}
 					//bottom left
-					else if (mouseX > (posX - 2 * gridSizef) && mouseX < (posX - 1 * gridSizef) && mouseY >(posY + 1 * gridSizef) && mouseY < (posY + 2 * gridSizef))
+					else if (mouseX > (posX - 2 * gridSizef) && mouseX < (posX - 1 * gridSizef) && mouseY > (posY + 1 * gridSizef) && mouseY < (posY + 2 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX - 2 * gridSizef), static_cast<float>(posY + 1 * gridSizef));
+						posX -= 2;
+						posY += 1;
 						moves--;
 					}
 					//bottom mid left
-					else if (mouseX > (posX - 1 * gridSizef) && mouseX < (posX - 0 * gridSizef) && mouseY >(posY + 2 * gridSizef) && mouseY < (posY + 3 * gridSizef))
+					else if (mouseX > (posX - 1 * gridSizef) && mouseX < (posX - 0 * gridSizef) && mouseY > (posY + 2 * gridSizef) && mouseY < (posY + 3 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX - 1 * gridSizef), static_cast<float>(posY + 2 * gridSizef));
+						posX -= 1;
+						posY += 2;
 						moves--;
 					}
 					//bottom mid right
-					else if (mouseX > (posX + 1 * gridSizef) && mouseX < (posX + 2 * gridSizef) && mouseY >(posY + 2 * gridSizef) && mouseY < (posY + 3 * gridSizef))
+					else if (mouseX > (posX + 1 * gridSizef) && mouseX < (posX + 2 * gridSizef) && mouseY > (posY + 2 * gridSizef) && mouseY < (posY + 3 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX + 1 * gridSizef), static_cast<float>(posY + 2 * gridSizef));
+						posX += 1;
+						posY += 2;
 						moves--;
 					}
 					//bottom right
-					else if (mouseX > (posX + 2 * gridSizef) && mouseX < (posX + 3 * gridSizef) && mouseY >(posY + 1 * gridSizef) && mouseY < (posY + 2 * gridSizef))
+					else if (mouseX > (posX + 2 * gridSizef) && mouseX < (posX + 3 * gridSizef) && mouseY > (posY + 1 * gridSizef) && mouseY < (posY + 2 * gridSizef))
 					{
 						reset(posX, posY);
 						knight.setPosition(static_cast<float>(posX + 2 * gridSizef), static_cast<float>(posY + 1 * gridSizef));
+						posX += 2;
+						posY += 1;
 						moves--;
 					}
 					else
@@ -282,7 +378,6 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 						cout << "Knight can't move in the specified position";
 					}
 				}
-
 			}
 		}
 
@@ -297,13 +392,20 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 		{
 
 			// gamewindow.close();
-			gameWindows g("media/gameover.png",gamewindow);
+			gameWindows g("media/gameover.png", gamewindow);
+		}
+
+		//I f the life of player get equals to zero,gameover
+		if (life <= 0)
+		{
+			// window.close();
+			gameWindows g("media/gameover.png", gamewindow);
+			cout << "You are killed by enemy, try again!!!";
 		}
 
 		if (posX == destX && posY == destY)
 		{
 			nextlevel(gamewindow);
-
 		}
 
 		//implemented hint logic
@@ -317,7 +419,7 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 
 			if (X > 930 && X < 1000 && Y > 280 && Y < 350)
 			{
-				bf.findpath(destX, destY, posX, posY);
+				bf.findpath(destX, destY, posX, posY,grid);
 			}
 
 			if (X > 930 && X < 1000 && Y > 40 && Y < 110)
@@ -338,8 +440,6 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 				(valid(a - 1, b - 2));
 
 				(valid(a - 2, b - 1));
-
-
 			}
 
 			//Display Rules
@@ -364,9 +464,67 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 				gamewindow.draw(tileMap[x][y]);
 			}
 		}
+
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < N; j++)
+			{
+				if (grid[i][j] == 2)
+				{
+
+					//draw the enmy
+					enemy.setPosition(i * gridSizef, j * gridSizef);
+					gamewindow.draw(enemy);
+
+					// dj.run(posX, posY, i/30, j/30, grid);
+				}
+
+				if (grid[i][j] == 3 && posY == j && posX == i)
+				{
+
+					cout << "Enemy attacked you!!!";
+					attsound.play();
+					life--;
+
+					grid[i][j] = 1;
+				}
+
+				if (grid[i][j] == 2 && posY == j && posX == i)
+				{
+
+					int a = i, b = j;
+					cout << "you killed enemy";
+					killsound.play();
+
+					grid[i][j] = 1;
+					life++;
+
+					if (grid[a + 1][b + 1] == 3)
+					{
+						grid[a + 1][b + 1] = 1;
+					}
+
+					if (grid[a + 1][b - 1] == 3)
+					{
+						grid[a + 1][b - 1] = 1;
+					}
+
+					if (grid[a - 1][b + 1] == 3)
+					{
+						grid[a - 1][b + 1] = 1;
+					}
+
+					if (grid[a - 1][b - 1] == 3)
+					{
+						grid[a - 1][b - 1] = 1;
+					}
+
+					// dj.run(posX, posY, i/30, j/30, grid);
+				}
+			}
+		}
 		gamewindow.draw(box);
 		gamewindow.draw(display);
-
 
 		//display the number of moves remaining
 		coin.setPosition(930, 40);
@@ -402,8 +560,6 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 		h.setPosition(950, 305);
 		gamewindow.draw(h);
 
-
-
 		//to conert int to string
 		stringstream smove, slife;
 
@@ -421,8 +577,8 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 			for (int i = bf.pathD.size() - 1; i >= 0; i--)
 			{
 				sPath.setPosition(bf.pathD[i].first * gridSizef + 10, bf.pathD[i].second * gridSizef + 10); //Reversed notion of row & column
-				gamewindow.draw(sPath);                                                             //final pathD
-																									//to conert int to string
+				gamewindow.draw(sPath);																		//final pathD
+																											//to conert int to string
 				stringstream seq;
 				seq << sequence;
 				order.setString(seq.str());
@@ -446,12 +602,10 @@ void level2::startGame(sf::RenderWindow &gamewindow){
 		//display everything on window
 		gamewindow.display();
 	}
-
-
 }
 
-void level2::nextlevel(sf::RenderWindow &window) {
-
+void level2::nextlevel(sf::RenderWindow &window)
+{
 
 	// sf::RenderWindow window;
 
@@ -465,8 +619,7 @@ void level2::nextlevel(sf::RenderWindow &window) {
 
 	texbg.loadFromFile("media/win2.png");
 	bg.setTexture(texbg);
-    bg.setScale(1000 / bg.getGlobalBounds().width, 900 / bg.getGlobalBounds().height);
-
+	bg.setScale(1000 / bg.getGlobalBounds().width, 900 / bg.getGlobalBounds().height);
 
 	while (window.isOpen())
 	{
@@ -490,17 +643,15 @@ void level2::nextlevel(sf::RenderWindow &window) {
 				}
 			}
 
-             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
+			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
 			{
-                    // window.close();
-					l3.start(window);
-            }
+				// window.close();
+				l3.start(window);
+			}
 		}
-		
 
 		window.clear();
 		window.draw(bg);
 		window.display();
 	}
-
 }
