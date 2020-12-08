@@ -37,6 +37,7 @@ public:
 	void reset(int x, int y);
 	void nextlevel(sf::RenderWindow &window);
 	void startGame(sf::RenderWindow &window);
+
 	//drawing chessboard size 8*8
 	sf::RectangleShape tileMap[N][N];
 	int grid[N][N];
@@ -45,6 +46,9 @@ private:
 	sf::Font fonts;
 	sf::Texture texknight, texprincess, texback, rulesTexture,emy;
 	sf::Sprite knight, princess, background, rulesSprite,enemy;
+
+	sf::CircleShape sPath;
+
 	float gridSizef = 900 / N;
 
 	int posX = 0, posY = 0, destX, destY;

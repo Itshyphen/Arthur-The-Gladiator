@@ -1,6 +1,8 @@
 #include "level2.hpp"
 #include "windows.hpp"
 
+
+
 using namespace sf;
 #define N 12
 
@@ -220,7 +222,7 @@ void level2::startGame(sf::RenderWindow &gamewindow)
 	display.setPosition(1000, 1000);
 
 	//Represent the Shortest path using bfs
-	sf::CircleShape sPath(25);
+	sPath.setRadius(35);
 	sPath.setFillColor(sf::Color(181, 101, 29));
 	sPath.setOutlineColor(sf::Color::White);
 	sPath.setOutlineThickness(2);
