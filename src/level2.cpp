@@ -222,7 +222,7 @@ void level2::startGame(sf::RenderWindow &gamewindow)
 	display.setPosition(1000, 1000);
 
 	//Represent the Shortest path using bfs
-	sPath.setRadius(35);
+	sPath.setRadius(25);
 	sPath.setFillColor(sf::Color(181, 101, 29));
 	sPath.setOutlineColor(sf::Color::White);
 	sPath.setOutlineThickness(2);
