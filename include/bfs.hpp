@@ -61,8 +61,9 @@ public:
 	bfs();
 	~bfs();
 
+    // bool isenemy(int x, int y,int grid[N][N]);
 	bool valid(int x, int y);
-	bool BFS(pair<int, int> previous[N][N], int kx, int ky, int dx, int dy, int dist[N][N]);
-	void findpath(int destX, int destY, int posX, int posY);
+	bool BFS(pair<int, int> previous[N][N], int kx, int ky, int dx, int dy, int dist[N][N],int grid[N][N]);
+	void findpath(int destX, int destY, int posX, int posY,int grid[N][N]);
 
 };

@@ -19,10 +19,25 @@ bool bfs:: valid(int x, int y)
     return true;
 }
 
+// bool bfs:: isenemy(int x, int y,int grid[N][N])
+// {
+//     for (int i = 0; i < N; i++)
+//         {for (int j = 0; j < N; j++)
+//         {
+//             	if(grid[i][j]==3)
+// 				{
+// 					return true;
+// 				}
+//         }}
+//         return false;
+
+
+// }
+
 
 // Find minimum number of steps taken by the knight
 // from source to reach destination using BFS
-bool bfs:: BFS(pair<int, int> previous[N][N], int kx, int ky, int dx, int dy, int dist[N][N])
+bool bfs:: BFS(pair<int, int> previous[N][N], int kx, int ky, int dx, int dy, int dist[N][N],int grid[N][N])
 {
 
     pathD.clear();
@@ -76,7 +91,7 @@ int col[] = {-1, 1, 1, -1, 2, -2, 2, -2};
             int x1 = x + row[i];
             int y1 = y + col[i];
 
-            if (valid(x1, y1) && visited[x1][y1] == false)
+            if (valid(x1, y1) && visited[x1][y1] == false && !(grid[x1][y1]==3))
             {
                 visited[x1][y1]=true;
                 q.push({x1, y1, dist[x][y] + 1});
@@ -92,9 +107,9 @@ int col[] = {-1, 1, 1, -1, 2, -2, 2, -2};
     return false;
 }
 
-void bfs:: findpath(int destX, int destY, int posX, int posY)
+void bfs:: findpath(int destX, int destY, int posX, int posY,int grid[N][N])
 {
-    if (BFS(previous, posX, posY, destX, destY, dist) == false)
+    if (BFS(previous, posX, posY, destX, destY, dist,grid) == false)
     {
 
         cout << "Destination is out of reach, firstly clear the road!!!";
