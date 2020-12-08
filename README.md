@@ -6,6 +6,7 @@ This project is the game made using the data structures and algorithms, divided 
 # Algorithms Used
 **Dijkstra Algorithm**     
 **Breadth First Search Algorithm**
+
 **Quick sort and Merge sort**
 
 ## Game Idea
