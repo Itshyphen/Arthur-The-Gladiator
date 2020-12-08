@@ -12,43 +12,56 @@
 #include<string.h>
 #include<string>
 #include<sstream>
+//#include<unistd.h>
 
 #include "dijkstra.hpp"
 #include "player.hpp"
+#include "level2.hpp"
+
+#define num 30
 
 using namespace std;
 using namespace sf;
 
 class game {
 
-    private:
-     
-    int grid[30][30];       //map with obstacle
-    int posX=2,posY=2,destX=25,destY=26; 
+private:
 
-    int moves=70;
-    int life=3;
-    int hints=1;
+	int grid[num][num];       //map with obstacle
+	int posX = 2, posY = 2, destX = 7, destY = 8;
+    int gridSize=30;
 
-    Texture background,texPlayer,texPrincess,path,black,emy,imm;
-    Sprite bg,princess,paths,obstacle,enemy,immunity;
+	int moves = 100;
+	int life = 1;
+	int hints = 1;
+	int rules = 0;
+	int bomb = 2;
+	int wins = 0;
 
-    Font font;
-    Clock clock;
-    float dtime=0.0f;
+	Texture background, texPlayer, texPrincess, path, black, emy, imm, texrule, texwin;
+	Sprite bg, princess, paths, obstacle, enemy, immunity, ruleset, winpage;
+	// audio a;
 
-    dijkstra dj;
-    Player player;
-    
+	Font font;
+	Clock clock;
+	float dtime = 0.0f;
+
+	dijkstra dj;
+	Player player;
+
+	void comments(string image);
+
 
 
 public:
+	sf::SoundBuffer bgs, attacked, killed, star, hin, win, gover, ride;
+	sf::Sound bgsound, attsound, killsound, hinsound, winsound, goversound, starsound, rsound;
 
 
-    game();
-    ~game();
+	game();
+	~game();
 
-    void start();
-    void Supriya();
-    void gameOver();
+	void start(sf::RenderWindow &window);
+	void nextlevel(sf::RenderWindow &window);
+	void gameOver();
 };
