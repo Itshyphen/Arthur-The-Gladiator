@@ -34,9 +34,9 @@ This project is the game made using the data structures and algorithms, divided 
 - **[Quick Sort](https://en.wikipedia.org/wiki/Quicksort)** and **[Merge Sort](https://en.wikipedia.org/wiki/Merge_sort)** are used for the sorting process
 ## Team members
 
-**Ranju G.C.(075BCT064)** \ 
-**Shreem Arjyal(075BCT084)** \ 
-**Supriya Khadka(075BCT090)** \ 
+**1.Ranju G.C. 075BCT064 ([@Itshyphen](https://github.com/Itshyphen))**\
+**2.Shreem Arjyal 075BCT084 ([@Shreem011](https://github.com/Shreem011))**\
+**3.Supriya Khadka 075BCT080 ([@Supriya090](https://github.com/Supriya090))**
 
 
 
